@@ -6,13 +6,13 @@
 #include <string>
 #include <vector>
 
-#include "../lib/lsv.hpp"
+#include "../lib/file_views.hpp"
 
 constexpr auto MAX_DELTA = 3;
 
 const auto floor_view = [](auto &lsv) {
   auto floor =
-      lsv.line | std::views::split(' ') | std::views::transform([](auto &&num) {
+      lsv.get() | std::views::split(' ') | std::views::transform([](auto &&num) {
         std::string report;
         std::ranges::copy(num, std::back_inserter(report));
         return std::stoi(report);
