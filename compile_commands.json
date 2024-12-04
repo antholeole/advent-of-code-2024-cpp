@@ -1,0 +1,23 @@
+[
+  {
+    "arguments": [
+      "/nix/store/3ix5h74n7ar9950vwzp4dxmil70pmx0k-gcc-wrapper-13.3.0/bin/g++",
+      "-c",
+      "-std=c++23",
+      "-Wall",
+      "-Wextra",
+      "-O2",
+      "-frandom-seed=hb9cqbvj61",
+      "-isystem",
+      "/nix/store/apm2l8lw2qp40x19nrck7q6hw55lrvfq-gtest-1.15.2-dev/include",
+      "-isystem",
+      "/nix/store/apm2l8lw2qp40x19nrck7q6hw55lrvfq-gtest-1.15.2-dev/include",
+      "-o",
+      "bin/1.out",
+      "days/1.cpp"
+    ],
+    "directory": "/home/oleina/Projects/advent-of-code-2024-cpp",
+    "file": "/home/oleina/Projects/advent-of-code-2024-cpp/days/1.cpp",
+    "output": "/home/oleina/Projects/advent-of-code-2024-cpp/bin/1.out"
+  }
+]
