@@ -10,7 +10,18 @@
     devShells.${system}.default = pkgs.mkShell {
       packages = with pkgs; [
         libgcc
+        bear
+        gtest
       ];
+
+      buildInputs = with pkgs; [
+        gtest
+      ];
+
+      shellHook = ''
+        # make the compilation database
+        make compile_commands
+      '';
     };
   };
 }
