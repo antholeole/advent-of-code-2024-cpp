@@ -1,6 +1,11 @@
 CXX = g++
+CXXFLAGS = -std=c++23 -Wall -Wextra -O2  `pkg-config --libs gtest`
 
-CXXFLAGS = -std=c++23 -Wall -Wextra -O2 
+NIX_CFLAGS_COMPILE	?= -I /usr/local/include
+
+# uses any target, it doesn't matter. This gives you the required files for clangd support.
+compile_commands:
+	bear -- $(CXX) $(CXXFLAGS) $(CFLAGS) $(NIX_CFLAGS_COMPILE) "days/1.cpp" -o "bin/1.out" 
 
 d1:
 	$(CXX) $(CXXFLAGS) "days/1.cpp" -o "bin/1.out"
@@ -23,5 +28,4 @@ d9:
 
 clean:
 	find . -type f -name "*.out" -delete
-
-.PHONY: clean help
+.PHONY: clean 
