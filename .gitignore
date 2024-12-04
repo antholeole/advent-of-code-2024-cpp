@@ -33,3 +33,4 @@
 
 inputs/*.txt
 bin/
+compile_commands.json
