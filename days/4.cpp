@@ -27,29 +27,38 @@ grid build_xmas_matrix() {
   return grid;
 };
 
-std::vector<coord> find_xs(const grid &grid) {
-  std::vector<coord> xs{};
+template <char C> std::vector<coord> find_chars(const grid &grid) {
+  std::vector<coord> chars{};
   for (const auto &[y, row] : grid | std::views::enumerate) {
     for (const auto &[x, c] : row | std::views::enumerate) {
-      if (c == 'X') {
-        xs.push_back({x, y});
+      if (c == C) {
+        chars.push_back({x, y});
       }
     }
   }
 
-  return xs;
+  return chars;
 }
 
+auto make_next_coord(const coord offset, const coord current) -> coord {
+  const auto [offsetX, offsetY] = offset;
+  const auto [currentX, currentY] = current;
+
+  return {offsetX + currentX, offsetY + currentY};
+};
+
+template <char... Cs>
 bool check_in_dir(const grid &grid, const coord offset, const coord start) {
-  std::vector<char> required_chars{'S', 'A', 'M', 'X'};
+  std::vector<char> required_chars{Cs...};
   coord current{start};
 
   const coord max_bounds{grid[0].size() - 1, grid.size() - 1};
 
   const auto fits_in_grid = [&grid](coord &coord) {
     const auto [x, y] = coord;
-    const bool out_of_bounds_anywhere =
-        x >= grid[0].size() || y >= grid.size() || x < 0 || y < 0;
+    const bool out_of_bounds_anywhere = (unsigned)x >= grid[0].size() ||
+                                        (unsigned)y >= grid.size() || x < 0 ||
+                                        y < 0;
 
     return !out_of_bounds_anywhere;
   };
@@ -60,15 +69,8 @@ bool check_in_dir(const grid &grid, const coord offset, const coord start) {
     return isLetter;
   };
 
-  const auto make_next_coord = [&offset, &current]() -> coord {
-    const auto [offsetX, offsetY] = offset;
-    const auto [currentX, currentY] = current;
-
-    return {offsetX + currentX, offsetY + currentY};
-  };
-
   while (fits_in_grid(current) && has_letter(current)) {
-    current = make_next_coord();
+    current = make_next_coord(offset, current);
     required_chars.pop_back();
   }
 
@@ -93,11 +95,10 @@ std::vector<coord> dirs = []() {
 }();
 
 int search_xmases(const grid &grid, const std::vector<coord> xs) {
-
   int found_xmas{0};
-  for (const auto &xCoord : xs) {
+  for (const auto &x_coord : xs) {
     for (const auto &dir : dirs) {
-      if (check_in_dir(grid, dir, xCoord)) {
+      if (check_in_dir<'X', 'M', 'A', 'S'>(grid, dir, x_coord)) {
         ++found_xmas;
       }
     }
@@ -106,10 +107,37 @@ int search_xmases(const grid &grid, const std::vector<coord> xs) {
   return found_xmas;
 }
 
+int search_x_mases(const grid &grid, const std::vector<coord> as) {
+  int found_xmas{0};
+  for (const auto &aCoord : as) {
+    int mas_count{0};
+    for (const auto &dir :
+         std::vector<coord>{{-1, -1}, {-1, 1}, {1, 1}, {1, -1}}) {
+      const auto [x, y] = dir;
+      const auto start_coord = make_next_coord(dir, aCoord);
+      const auto start_dir = std::tuple{x * -1, y * -1};
+
+      if (check_in_dir<'M', 'A', 'S'>(grid, start_dir, start_coord)) {
+        mas_count++;
+      }
+    }
+
+    if (mas_count == 2) {
+      ++found_xmas;
+    }
+  }
+
+  return found_xmas;
+}
+
 int main() {
   const auto grid = build_xmas_matrix();
-  const auto xs = find_xs(grid);
 
+  const auto xs = find_chars<'X'>(grid);
   const auto ret = search_xmases(grid, xs);
   std::printf("v: %d\n", ret);
+
+  const auto as = find_chars<'A'>(grid);
+  const auto ret2 = search_x_mases(grid, as);
+  std::printf("v2: %d\n", ret2);
 }
