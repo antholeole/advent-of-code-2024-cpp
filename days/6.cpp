@@ -82,7 +82,7 @@ const auto get_direction = [](std::pair<int, int> step_dir) {
 };
 
 const auto increment_position = [](Coord step_dir,
-                                    Coord current) -> std::pair<int, int> {
+                                   Coord current) -> std::pair<int, int> {
   const auto [guard_x, guard_y] = current;
   const auto [delta_x, delta_y] = step_dir;
   return {guard_x + delta_x, guard_y + delta_y};
@@ -90,7 +90,8 @@ const auto increment_position = [](Coord step_dir,
 
 struct guard_positions {
   DirectionMap repeated_positions;
-  CoordMap unique_positons;
+  CoordMap unique_positions;
+  CoordMap candidate_barrel_position;
 };
 
 // returns NONE if the guard map gives a cycle.
@@ -115,19 +116,33 @@ std::optional<guard_positions> get_unique_positions(guard_map &map) {
   while (true) {
     const auto [new_x, new_y] = current;
 
-    if (positions.unique_positons[new_x].contains(new_y)) {
+    // if its not unique...
+    if (positions.unique_positions[new_x].contains(new_y)) {
+      // and we've already hit this path...
       if (positions.repeated_positions[new_x].contains(new_y)) {
+
         const auto prev_dir = positions.repeated_positions[new_x][new_y];
-        if (prev_dir == face_direction::both ||
-            prev_dir == get_direction(step_dir)) {
+
+        // if we've already faced this direction at this point, we've hit a
+        // loop.
+        if (prev_dir == get_direction(step_dir)) {
           return std::optional<guard_positions>{};
+        } else {
+          // say that we've faced both directons.
+          positions.repeated_positions[new_x][new_y] = face_direction::both;
         }
+
       } else {
+        // otherwise, just insert this direction.
         positions.repeated_positions[new_x][new_y] = get_direction(step_dir);
       }
+
+      // add a candidate barrel position where we're facing.
+      const auto [infront_x, infront_y] = increment_position(step_dir, current);
+      positions.candidate_barrel_position[infront_x].insert(infront_y);
     }
 
-    positions.unique_positons[new_x].insert(new_y);
+    positions.unique_positions[new_x].insert(new_y);
 
     auto next_pos = increment_position(step_dir, current);
     while (is_barricade(next_pos)) {
@@ -146,30 +161,40 @@ std::optional<guard_positions> get_unique_positions(guard_map &map) {
 
 int num_barrel_loops(guard_map &original_map, guard_positions &positions) {
   const auto place_barrel = [](guard_map new_map,
-                               Coord barrel_pos) -> guard_map {
+                               Coord const &barrel_pos) -> guard_map {
     const auto [x, y] = barrel_pos;
     new_map.obstacles[x].insert(y);
     return new_map;
   };
 
-  for (const auto &[duplicated_pos_x, y_to_dir] :
-       positions.repeated_positions) {
-    for (const auto &[duplicated_pos_y, dir] : y_to_dir) {
-        const auto barrel_pos = increment_position(dir, {duplicated_pos_x, duplicated_pos_y});
+  auto cycle_creation{0};
+  for (const auto &[candidate_x, y_set] : positions.candidate_barrel_position) {
+    for (const auto candidate_y : y_set) {
+        std::printf("%d %d\n", candidate_x, candidate_y);
+      auto new_map = place_barrel(original_map, {candidate_x, candidate_y});
+      const auto v = get_unique_positions(new_map);
+      if (!v) {
+        ++cycle_creation;
+        std::printf("valid!\n");
+      }
     }
   }
+
+  return cycle_creation;
 }
 
 int main() {
   auto map = read_map();
-  const auto positions = get_unique_positions(map);
+  auto positions = get_unique_positions(map);
 
   // solve pt 1
   int unique_steps{0};
-  for (const auto &[x, vals] : positions->unique_positons) {
+  for (const auto &[x, vals] : positions->unique_positions) {
     unique_steps += vals.size();
   }
   std::printf("pt1: %d\n", unique_steps);
 
   // solve pt 2
+  const auto num_loops = num_barrel_loops(map, *positions);
+  std::printf("pt2: %d\n", num_loops);
 }
