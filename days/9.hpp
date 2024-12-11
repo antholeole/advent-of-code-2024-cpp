@@ -5,13 +5,11 @@
 
 #include "../lib/file_views.hpp"
 
-std::vector<int> parse_disk() {
-  std::ifstream fstream{"inputs/9.txt"};
+inline std::vector<int> parse_disk(auto input) {
   std::vector<int> disk{};
 
-  for (const auto [idx, v] :
-       std::views::istream<char_file_view>(fstream) | std::views::enumerate) {
-    for (const auto _ : std::views::iota(0, v.get() - '0')) {
+  for (const auto [idx, v] : input | std::views::enumerate) {
+    for (const auto _ : std::views::iota(0, v - '0')) {
       if (idx % 2 == 0) {
         disk.push_back(idx / 2);
       } else {
@@ -23,7 +21,7 @@ std::vector<int> parse_disk() {
   return disk;
 }
 
-void compress(std::vector<int> &disk) {
+inline void compress(std::vector<int> &disk) {
   size_t space_idx = 0;
   auto file_idx = disk.size() - 1;
 
@@ -44,7 +42,7 @@ void compress(std::vector<int> &disk) {
   }
 }
 
-long checksum(std::vector<int> const &disk) {
+inline long checksum(std::vector<int> const &disk) {
   long sum{0};
   for (const auto [idx, v] : disk | std::views::enumerate) {
     if (v == -1) {
@@ -57,9 +55,16 @@ long checksum(std::vector<int> const &disk) {
   return sum;
 }
 
+#ifdef MAIN
 int main() {
-  auto disk = parse_disk();
+  std::ifstream fstream{"inputs/9.txt"};
+  const auto charstream =
+      std::views::istream<char_file_view>(fstream) |
+      std::views::transform([](auto &v) { return v.get(); });
+
+  auto disk = parse_disk(charstream);
   compress(disk);
 
   std::printf("checksum: %ld\n", checksum(disk));
 }
+#endif
