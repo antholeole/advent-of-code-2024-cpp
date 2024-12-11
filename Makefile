@@ -18,6 +18,8 @@ d7:
 	$(CXX) $(CXXFLAGS) "days/7.cpp" -o "bin/7.out"
 d8:
 	$(CXX) $(CXXFLAGS) "days/8.cpp" -o "bin/8.out"
+d9:
+	$(CXX) $(CXXFLAGS) "days/9.cpp" -o "bin/9.out"
 
 clean:
 	find . -type f -name "*.out" -delete
