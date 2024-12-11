@@ -64,7 +64,7 @@ struct grid {
   };
 
   // putting something where something already exists is UB.
-  void put(const char c, Coord const &&at) {
+  void put(const char c, Coord const &at) {
     if (is_out_of_bounds(at)) {
       return;
     }
