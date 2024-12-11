@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++23 -Wall -Wextra -O2  `pkg-config --libs gtest`
+CXXFLAGS = -std=c++23 -Wall -Wextra `pkg-config --libs gtest` -g -D DEBUG
 
 NIX_CFLAGS_COMPILE	?= -I /usr/local/include
 
@@ -27,7 +27,7 @@ d8:
 	$(CXX) $(CXXFLAGS) "days/8.cpp" -o "bin/8.out"
 
 d9:
-	$(CXX) $(CXXFLAGS) "days/9.cpp" -o "bin/9.out" -D MAIN
+	$(CXX) $(CXXFLAGS) "days/9.test.cpp" -o "bin/9.out" -D MAIN
 d9t:
 	$(CXX) $(CXXFLAGS) "days/9.test.cpp" -o "bin/9.test.out" -D TEST_MAIN
 
