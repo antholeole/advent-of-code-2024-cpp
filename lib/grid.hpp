@@ -12,11 +12,12 @@
 
 using Coord = std::pair<int, int>;
 
-struct grid {
+template <typename T> struct grid {
   grid(Coord &&size) : size{size} {};
   grid() {};
 
-  template <char IgnoreChar> static grid build_grid(std::string &&filename) {
+  template <char IgnoreChar>
+  static grid<char> build_grid(std::string &&filename) {
     grid grid{};
 
     std::ifstream fstream{filename};
@@ -28,7 +29,7 @@ struct grid {
   };
 
   template <char IgnoreChar>
-  static grid build_grid(std::vector<std::string> &&lines) {
+  static grid<char> build_grid(std::vector<std::string> &&lines) {
     grid grid{};
     return build_grid_from_iter<IgnoreChar>(std::move(lines));
   };
@@ -58,7 +59,7 @@ struct grid {
   };
 
   // putting something where something already exists is UB.
-  void put(const char c, Coord const &at) {
+  void put(const T c, Coord const &at) {
     if (is_out_of_bounds(at)) {
       return;
     }
@@ -100,11 +101,12 @@ struct grid {
 
 private:
   Coord size;
-  std::unordered_map<int, std::unordered_map<int, char>> backmap{};
-  std::unordered_map<char, std::unordered_map<int, std::unordered_set<int>>>
+  std::unordered_map<int, std::unordered_map<int, T>> backmap{};
+  std::unordered_map<T, std::unordered_map<int, std::unordered_set<int>>>
       special_objects{};
 
-  template <char IgnoreChar> static grid build_grid_from_iter(auto &&lines) {
+  template <char IgnoreChar>
+  static grid<char> build_grid_from_iter(auto &&lines) {
     grid grid{};
 
     for (auto [row, line] : lines | std::views::enumerate) {

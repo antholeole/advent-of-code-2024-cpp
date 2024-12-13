@@ -6,19 +6,18 @@
 #include "gtest/gtest.h"
 
 TEST(DAY10_PT1, SIMPLE) {
-  const auto grid = grid::build_grid<'.'>({
+  const auto input = grid<char>::build_grid<'.'>({
       "0123",
       "1234",
       "8765",
       "9876",
   });
 
-  EXPECT_EQ(find_trail_value_pt1(grid), 1);
+  EXPECT_EQ(find_trail_value_pt1(input), 1);
 }
 
 TEST(DAY10_PT1, EXAMPLE) {
-  const auto grid = grid::build_grid<'.'>({
-
+  const auto input = grid<char>::build_grid<'.'>({
       "89010123",
       "78121874",
       "87430965",
@@ -29,7 +28,7 @@ TEST(DAY10_PT1, EXAMPLE) {
       "10456732",
   });
 
-  EXPECT_EQ(find_trail_value_pt1(grid), 36);
+  EXPECT_EQ(find_trail_value_pt1(input), 36);
 }
 
 #ifdef TEST_MAIN
