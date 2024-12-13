@@ -1,6 +1,5 @@
 #include <cstdint>
 #include <fstream>
-#include <future>
 #include <map>
 #include <ranges>
 #include <string>

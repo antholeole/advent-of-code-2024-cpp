@@ -18,6 +18,13 @@ template <typename T> struct grid {
   grid(Coord &&size) : size{size} {};
   grid() {};
 
+  static constexpr std::array<Coord, 4> cardinals{
+      std::pair{-1, 0},
+      {1, 0},
+      {0, -1},
+      {0, 1},
+  };
+
   template <char IgnoreChar>
   static grid<char> build_grid(std::string &&filename) {
     grid grid{};
@@ -31,9 +38,9 @@ template <typename T> struct grid {
   };
 
   template <char IgnoreChar>
-  static grid<char> build_grid(std::vector<std::string> &&lines) {
+  static grid<char> build_grid(std::vector<std::string> const &lines) {
     grid grid{};
-    return build_grid_from_iter<IgnoreChar>(std::move(lines));
+    return build_grid_from_iter<IgnoreChar>(lines);
   };
 
   Coord get_size() const { return size; };
@@ -106,7 +113,7 @@ template <typename T> struct grid {
     rebuilt.resize(size.second + 1);
     std::for_each(
         rebuilt.begin(), rebuilt.end(),
-        [size = this->size](std::vector<T>& v) { v.resize(size.first + 1); });
+        [size = this->size](std::vector<T> &v) { v.resize(size.first + 1); });
 
     for (const auto &[x, row] : backmap) {
       for (const auto &[y, v] : row) {
