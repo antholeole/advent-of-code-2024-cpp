@@ -1,23 +1,22 @@
 #pragma once
-#include <cstddef>
-#include <ranges>
 #include <unordered_map>
+#include <vector>
 
-struct uf {
-  uf(size_t els) {
-    for (const auto v : std::views::iota(0ul, els)) {
+template <typename T> struct union_find {
+  union_find(std::vector<T> els) {
+    for (const auto v : els) {
       parents[v] = v;
     }
   }
 
-  void join(const size_t one, const size_t two) {
+  void join(const T one, const T two) {
     const auto parent_one = find(one);
     const auto parent_two = find(two);
 
     parents[parent_one] = parent_two;
   }
 
-  size_t find(const size_t el) const {
+  T find(const T el) const {
     const auto el_parent = parents.at(el);
     if (el_parent == el) {
       return el;
@@ -27,5 +26,5 @@ struct uf {
   }
 
 private:
-  std::unordered_map<size_t, size_t> parents{};
+  std::unordered_map<T, T> parents{};
 };
