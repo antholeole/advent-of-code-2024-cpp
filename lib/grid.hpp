@@ -1,6 +1,8 @@
 #pragma once
 
+#include <algorithm>
 #include <fstream>
+#include <iostream>
 #include <optional>
 #include <ranges>
 #include <unordered_map>
@@ -97,6 +99,28 @@ template <typename T> struct grid {
     }
 
     return backmap.at(x).at(y);
+  };
+
+  template <char IgnoreChar = '.'> void print() const {
+    std::vector<std::vector<T>> rebuilt{};
+    rebuilt.resize(size.second + 1);
+    std::for_each(
+        rebuilt.begin(), rebuilt.end(),
+        [size = this->size](std::vector<T>& v) { v.resize(size.first + 1); });
+
+    for (const auto &[x, row] : backmap) {
+      for (const auto &[y, v] : row) {
+        rebuilt[y][x] = v;
+      }
+    }
+
+    for (const auto &v : rebuilt) {
+      for (const auto &t : v) {
+        std::cout << t;
+      }
+
+      std::printf("\n");
+    }
   };
 
 private:

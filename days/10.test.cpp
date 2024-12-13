@@ -31,6 +31,20 @@ TEST(DAY10_PT1, EXAMPLE) {
   EXPECT_EQ(find_trail_value_pt1(input), 36);
 }
 
+TEST(DAY10_PT2, EXAMPLE) {
+  const auto input = grid<char>::build_grid<'.'>({
+      ".....0.",
+      "..4321.",
+      "..5..2.",
+      "..6543.",
+      "..7..4.",
+      "..8765.",
+      "..9....",
+  });
+
+  EXPECT_EQ(find_trail_value_pt2(input), 3);
+}
+
 #ifdef TEST_MAIN
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
