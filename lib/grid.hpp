@@ -1,3 +1,5 @@
+#pragma once
+
 #include <fstream>
 #include <optional>
 #include <ranges>
@@ -21,22 +23,14 @@ struct grid {
     auto lines{std::views::istream<lsv_file_view>(fstream) |
                std::views::transform(
                    [](auto &lsv) -> std::string & { return lsv.get(); })};
-    for (auto [row, line] : lines | std::views::enumerate) {
-      for (auto [col, element] : line | std::views::enumerate) {
-        // not the best strategy but this value is left at
-        // the bottom right corner due to iteration order
-        grid.size = {col, row};
 
-        if (element == IgnoreChar) {
-          continue;
-        }
+    return build_grid_from_iter<IgnoreChar>(lines);
+  };
 
-        grid.special_objects[element][col].insert(row);
-        grid.backmap[col][row] = element;
-      }
-    }
-
-    return grid;
+  template <char IgnoreChar>
+  static grid build_grid(std::vector<std::string> &&lines) {
+    grid grid{};
+    return build_grid_from_iter<IgnoreChar>(std::move(lines));
   };
 
   Coord get_size() const { return size; };
@@ -90,14 +84,14 @@ struct grid {
     return ret;
   };
 
-  std::optional<char> element_at(Coord &coord) const {
+  std::optional<char> element_at(Coord const &coord) const {
     const auto &[x, y] = coord;
 
-    if (!special_objects.contains(x)) {
+    if (!backmap.contains(x)) {
       return std::nullopt;
     }
 
-    if (!special_objects.at(x).contains(y)) {
+    if (!backmap.at(x).contains(y)) {
       return std::nullopt;
     }
 
@@ -109,4 +103,25 @@ private:
   std::unordered_map<int, std::unordered_map<int, char>> backmap{};
   std::unordered_map<char, std::unordered_map<int, std::unordered_set<int>>>
       special_objects{};
+
+  template <char IgnoreChar> static grid build_grid_from_iter(auto &&lines) {
+    grid grid{};
+
+    for (auto [row, line] : lines | std::views::enumerate) {
+      for (auto [col, element] : line | std::views::enumerate) {
+        // not the best strategy but this value is left at
+        // the bottom right corner due to iteration order
+        grid.size = {col, row};
+
+        if (element == IgnoreChar) {
+          continue;
+        }
+
+        grid.special_objects[element][col].insert(row);
+        grid.backmap[col][row] = element;
+      }
+    }
+
+    return grid;
+  }
 };
