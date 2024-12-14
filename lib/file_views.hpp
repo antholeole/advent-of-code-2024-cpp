@@ -19,6 +19,7 @@ template <TIsReader TReader> struct file_istream : private TReader {
   };
 
   TReader::TRet &get() { return v; }
+  operator typename TReader::TRet() const { return v; }
 
 private:
   TReader::TRet v;
