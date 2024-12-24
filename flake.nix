@@ -13,6 +13,7 @@
         bear
         gtest
         pkg-config
+        valgrind
       ];
 
       buildInputs = with pkgs; [

@@ -20,9 +20,25 @@ TEST(DAY13, EXAMPLE) {
                                       .prize = {7870, 6450},
                                   }};
 
-  EXPECT_EQ(solve(maks[0]), 280);
-  EXPECT_EQ(solve(maks[1]), 0);
-  EXPECT_EQ(solve(maks[2]), 200);
+  EXPECT_EQ(solve(maks[0], 0), 280);
+  EXPECT_EQ(solve(maks[1], 0), 0);
+  EXPECT_EQ(solve(maks[2], 0), 200);
+}
+
+TEST(DAY13, EXAMPLE_LONG) {
+  EXPECT_EQ(solve(
+                {
+                    .a = {26, 66},
+                    .b = {67, 21},
+                    .prize = {12748, 12176},
+                },
+                10000000000000),
+            10);
+  EXPECT_EQ(
+      solve(
+          {.a = {10000000000000, 0}, .b = {0, 10000000000000}, .prize = {0, 0}},
+          10000000000000),
+      4);
 }
 
 #ifdef TEST_MAIN
