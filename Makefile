@@ -52,6 +52,10 @@ d13:
 d13t:
 	$(CXX) $(CXXFLAGS) "days/13.test.cpp" -o "bin/13.test.out" -D TEST_MAIN
 
+	
+d14:
+	$(CXX) $(CXXFLAGS) -O3 "days/14.cpp" -o "bin/14.out" -D MAIN
+
 clean:
 	find . -type f -name "*.out" -delete
 .PHONY: clean 
