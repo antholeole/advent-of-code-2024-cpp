@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-inline std::vector<int> string_to_vec_int(std::string &&str) {
+inline std::vector<int> string_to_vec_int(std::string const& str) {
   std::vector<int> ret(str.cbegin(), str.cend());
 
   std::transform(ret.cbegin(), ret.cend(), ret.begin(),

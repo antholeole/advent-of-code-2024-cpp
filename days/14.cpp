@@ -139,7 +139,7 @@ void display_map(std::vector<robot_t<int>> robots, int day) {
     putchar('\n');
   }
 
-  std::printf("day %d above:\n", day);
+  std::printf("day %d above:\n", day + 1);
   std::this_thread::sleep_for(std::chrono::milliseconds(50000));
 };
 
@@ -149,14 +149,10 @@ int main() {
 
   auto robots{parse_robots(std::move(stream))};
 
-  // skip to a day that i thought i saw a tree...
-  const auto inital_offset{1617};
-  robots = sim_bathroom<101, 103>(std::move(robots), inital_offset);
-
   std::ranges::for_each(std::views::iota(0), [&](int n) {
     robots = sim_bathroom<101, 103>(std::move(robots), 1);
 
-    display_map<101, 103>(robots, n + inital_offset);
+    display_map<101, 103>(robots, n);
   });
 }
 #endif

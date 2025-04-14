@@ -15,7 +15,7 @@
 using Coord = std::pair<int, int>;
 
 template <typename T> struct grid {
-  grid(Coord &&size) : size{size} {};
+  grid(Coord &&size) noexcept : size{size} {};
   grid() {};
 
   static constexpr std::array<Coord, 4> cardinals{
@@ -26,7 +26,7 @@ template <typename T> struct grid {
   };
 
   template <char IgnoreChar>
-  static grid<char> build_grid(std::string &&filename) {
+  static grid<char> build_grid(std::string const& filename) {
     grid grid{};
 
     std::ifstream fstream{filename};
